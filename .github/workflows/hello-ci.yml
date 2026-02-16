@@ -2,8 +2,6 @@ name: Weather App Production Check
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
   build-and-test:
@@ -14,14 +12,17 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Install Dependencies
-        run: npm install 
+
+      # We REMOVED 'npm install' because you don't have a package.json
+      
       - name: Run Unit Tests
         run: node test.js
+
       - name: Run Security Check
         run: node app.js
         env:
