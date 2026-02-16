@@ -9,12 +9,10 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install pytest
-        uses : python3 -m pip install pytest
+        run: python3 -m pip install pytest
 
       - name: Run a greeting
-      
         run: echo "The CI pipeline has successfully started!"
 
       - name: Run Python Tests
-        run : pyton3 -m pytest
-        
+        run: python3 -m pytest
