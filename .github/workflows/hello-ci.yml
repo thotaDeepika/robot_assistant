@@ -1,42 +1,26 @@
-name: Weather App Production Check
+name: Python Tests
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  build-and-test:
+  test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x]
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          python-version: '3.11'
 
-      # We REMOVED 'npm install' because you don't have a package.json
-      
-      - name: Run Unit Tests
-        run: node test.js
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-      - name: Run Security Check
-        run: node app.js
-        env:
-          WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
-
-  package:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Create Build Artifact
-        run: zip -r weather-app-dist.zip . -x "*.git*"
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: weather-app-dist
-          path: weather-app-dist.zip
+      - name: Run tests
+        run: pytest -v
